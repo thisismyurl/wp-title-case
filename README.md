@@ -1,5 +1,8 @@
 # WP Title Case
 
+[![CI](https://github.com/thisismyurl/wp-title-case/actions/workflows/ci.yml/badge.svg)](https://github.com/thisismyurl/wp-title-case/actions/workflows/ci.yml) [![WordPress Tested](https://img.shields.io/badge/WordPress-4.1%2B-blue)](https://wordpress.org/) [![License](https://img.shields.io/badge/License-GPL--2.0-blue)](LICENSE)
+
+
 Auto-applies title-case rules to WordPress page and post titles via the `the_title` filter — display only, no database writes.
 
 ## The short story
