@@ -1,449 +1,440 @@
 <?php
-
 /**
+ * Common WordPress plugin scaffolding for WP Title Case.
  *
- * thisismyurl.com common WordPress plugin files
+ * Provides the base class that the plugin's core class extends.
  *
- * This file contains all the logic required for the plugin
- *
- * @package 	thisismyurl.com common WordPress plugin
- * @copyright	Copyright (c) 2014, Chrsitopher Ross
- * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License, v2 (or newer)
- *
- * @since 		thisismyurl.com common WordPress plugin 15.01
- * @version		15.01
- *
+ * @package   WP_Title_Case
+ * @author    Christopher Ross
+ * @copyright Copyright (c) 2014-2026, Christopher Ross
+ * @license   https://www.gnu.org/licenses/gpl-2.0.html GPL-2.0-or-later
  */
 
 
-/* if the plugin is called directly, die */
-if ( ! defined( 'WPINC' ) )
+/* If the plugin is called directly, die. */
+if ( ! defined( 'WPINC' ) ) {
 	die;
-
-
+}
 
 
 /**
- * Creates the class required for thisismyurl.com common WordPress plugin files
+ * Common base class for WP Title Case admin/scaffolding.
  *
- * @author	Christopher Ross <info@thisismyurl.com>
- * @version    Release: @15.01@
- * @since	 Class available since Release 14.11
- *
+ * @since 14.11
  */
 class thisismyurl_Common_WPTC {
 
 
 	/**
-	  * Standard Constructor
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/add_action
-	  * @since Method available since Release 14.11
-	  *
-	  */
-    public function __construct() {
+	 * Register hooks.
+	 */
+	public function __construct() {
 
- 		/* loaded for both */
- 		add_action( 'plugins_loaded', 			array( $this, 'load_textdomain' ) );
-		add_action( 'activate_plugin_name', 	array( $this, 'activate_plugin_name' ) );
-		add_action( 'deactivate_plugin_name', 	array( $this, 'deactivate_plugin_name' ) );
+		/* Loaded for both. */
+		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 
+		/* Front end only. */
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_style' ) );
 
-		/* front end only */
-		add_action( 'wp_enqueue_scripts', 		array( $this, 'enqueue_style' ) );
-
-
-		/* admin only */
-		add_action( 'admin_enqueue_scripts', 	array( $this, 'admin_enqueue_scripts' ) );
-		add_action( 'admin_menu', 				array( $this, 'admin_menu' ) );
+		/* Admin only. */
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_filter( 'plugin_action_links_' . THISISMYURL_WPTC_FILENAME, array( $this, 'add_action_link' ), 10, 2 );
-		add_action( 'admin_init', 				array( $this, 'admin_init' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
-		register_uninstall_hook( 'uninstall.php', false );
-
-
-    }
+		/* Per-post override UI. */
+		add_action( 'add_meta_boxes', array( $this, 'register_post_meta_box' ) );
+		add_action( 'save_post', array( $this, 'save_post_meta_box' ) );
+	}
 
 
 
 	/**
-	  * load_textdomain
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/load_plugin_textdomain
-	  * @since Method available since Release 14.11
-	  *
-	  */
- 	function load_textdomain() {
+	 * Load the plugin text domain.
+	 */
+	public function load_textdomain() {
 
-		/* loads the plugin text domain and language files */
-		load_plugin_textdomain( THISISMYURL_WPTC_TEXTDOMAIN,
-								false,
-								THISISMYURL_WPTC_FILEPATH . '/langs'
+		load_plugin_textdomain(
+			'wp-title-case',
+			false,
+			THISISMYURL_WPTC_FILEPATH . '/langs'
+		);
+	}
+
+
+
+	/**
+	 * Front-end style/script enqueue (no-op when files are absent).
+	 */
+	public function enqueue_style() {
+
+		if ( file_exists( __DIR__ . '/css/' . THISISMYURL_WPTC_NAMESPACE . '.css' ) ) {
+
+			wp_enqueue_style(
+				THISISMYURL_WPTC_NAMESPACE,
+				THISISMYURL_WPTC_FILEPATHURL . 'css/' . THISISMYURL_WPTC_NAMESPACE . '.css',
+				false,
+				THISISMYURL_WPTC_VERSION
+			);
+
+		}
+	}
+
+
+
+	/**
+	 * Admin-screen style/script enqueue (settings page only).
+	 */
+	public function admin_enqueue_scripts() {
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen-id check, no state change.
+		if ( ! isset( $_GET['page'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen-id check, no state change.
+		$page = sanitize_key( wp_unslash( $_GET['page'] ) );
+
+		if ( 'wp_title_case_settings_page' !== $page ) {
+			return;
+		}
+
+		wp_register_style(
+			'thisismyurl-common',
+			THISISMYURL_WPTC_FILEPATHURL . 'css/thisismyurl-common.css',
+			false,
+			THISISMYURL_WPTC_VERSION
 		);
 
-	}
+		wp_enqueue_style( 'thisismyurl-common' );
 
+		if ( file_exists( __DIR__ . '/css/' . THISISMYURL_WPTC_NAMESPACE . '-admin.css' ) ) {
 
-
-	/**
-	  * activate_plugin_name
-	  *
-	  * @access public
-	  * @static
-	  * @since Method available since Release 15.01
-	  *
-	  */
- 	function activate_plugin_name() {
-
-	}
-
-
-
-	/**
-	  * deactivate_plugin_name
-	  *
-	  * @access public
-	  * @static
-	  * @since Method available since Release 15.01
-	  *
-	  */
- 	function deactivate_plugin_name() {
-
-	}
-
-
-
-	/**
-	  * enqueue_style
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/wp_enqueue_style
-	  * @since Method available since Release 14.11
-	  *
-	  */
-    public function enqueue_style() {
-		
-		/* enqueue the style if it's found */
-		if ( file_exists( dirname( __FILE__ ) . '/css/' . THISISMYURL_WPTC_NAMESPACE . '.css' ) ) {
-
-			wp_enqueue_style( 	THISISMYURL_WPTC_NAMESPACE,
-								THISISMYURL_WPTC_FILEPATHURL . 'css/' . THISISMYURL_WPTC_NAMESPACE . '.css',
-								false,
-								THISISMYURL_WPTC_VERSION
-							);
-		
-		}
-
-		/* enqueue the script if it's found */
-		if ( file_exists( THISISMYURL_WPTC_FILEPATH . '/js/' . THISISMYURL_WPTC_NAMESPACE . '.js' ) ) {
-
-			wp_enqueue_style( 	THISISMYURL_WPTC_NAMESPACE,
-								THISISMYURL_WPTC_FILEPATHURL . 'js/' . THISISMYURL_WPTC_NAMESPACE . '.js',
-								false,
-								THISISMYURL_WPTC_VERSION
-							);
-		
-		}
-
-
-	}
-
-
-
-	/**
-	  * admin_enqueue_scripts
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/wp_enqueue_style
-	  * @since Method available since Release 14.12
-	  *
-	  */
-	function admin_enqueue_scripts() {
-
-
-		if ( isset( $_GET['page'] ) ) {
-
-			/* only load this function on the correct admin pages */
-			if ( THISISMYURL_WPTC_TEXTDOMAIN . '_settings_page' != $_GET['page'] )
-			   return;
-
-			wp_register_style(  'thisismyurl-common',
-								THISISMYURL_WPTC_FILEPATHURL . 'css/thisismyurl-common.css',
-								false,
-								THISISMYURL_WPTC_VERSION
-							);
-		
-		    wp_enqueue_style( 'thisismyurl-common' );
-
-			/* enqueue a special admin style if it's found */
-			if ( file_exists( THISISMYURL_WPTC_FILEPATH . 'css/' . THISISMYURL_WPTC_NAMESPACE . '-admin.css' ) ) {
-
-				wp_enqueue_style( 	THISISMYURL_WPTC_NAMESPACE,
-									THISISMYURL_WPTC_FILEPATHURL . 'css/' . THISISMYURL_WPTC_NAMESPACE . '-admin.css',
-									false,
-									THISISMYURL_WPTC_VERSION
-								);
-			
-			}
-
-			/* enqueue a special admin script if it's found */
-			if ( file_exists( THISISMYURL_WPTC_FILEPATH . 'js/' . THISISMYURL_WPTC_NAMESPACE . '-admin.js' ) ) {
-
-				wp_enqueue_style( 	THISISMYURL_WPTC_NAMESPACE,
-									THISISMYURL_WPTC_FILEPATHURL . 'js/' . THISISMYURL_WPTC_NAMESPACE . '-admin.js',
-									false,
-									THISISMYURL_WPTC_VERSION
-								);
-			
-			}
-
+			wp_enqueue_style(
+				THISISMYURL_WPTC_NAMESPACE . '-admin',
+				THISISMYURL_WPTC_FILEPATHURL . 'css/' . THISISMYURL_WPTC_NAMESPACE . '-admin.css',
+				false,
+				THISISMYURL_WPTC_VERSION
+			);
 
 		}
-
 	}
 
 
 
 	/**
-	  * admin_menu
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/add_options_page
-	  * @since Method available since Release 14.12
-	  *
-	  * @todo change the parent menu if there is no settings
-	  *
-	  */
-	function admin_menu() {
+	 * Register the settings page.
+	 */
+	public function admin_menu() {
 
-		/* add the page, set capacities etc */
-		add_options_page( 	THISISMYURL_WPTC_SHORTNAME,
-							THISISMYURL_WPTC_SHORTNAME,
-							'manage_options',
-							THISISMYURL_WPTC_TEXTDOMAIN . '_settings_page',
-							array( $this, 'settings_page' )
-						);
-
-		/* remove the menu item from settings */
-		if ( ! file_exists( dirname( __FILE__ ) . '/' . THISISMYURL_WPTC_NAMESPACE . '-settings.php' ) ) 
-			remove_submenu_page( 'options-general.php', THISISMYURL_WPTC_TEXTDOMAIN . '_settings_page' );
-	
+		add_options_page(
+			THISISMYURL_WPTC_SHORTNAME,
+			THISISMYURL_WPTC_SHORTNAME,
+			'manage_options',
+			'wp_title_case_settings_page',
+			array( $this, 'settings_page' )
+		);
 	}
 
 
 
 	/**
-	  * plugin_action_links
-	  *
-	  * @access public
-	  * @static
-	  * @since Method available since Release 14.12
-	  *
-	  */
-	function add_action_link( $links, $file ) {
+	 * Add a Settings link to the plugins-list row.
+	 *
+	 * @param array  $links Action links.
+	 * @param string $file  Plugin file basename.
+	 * @return array
+	 */
+	public function add_action_link( $links, $file ) {
 
 		static $this_plugin;
 
-		if( ! $this_plugin )
+		if ( ! $this_plugin ) {
 			$this_plugin = plugin_basename( __FILE__ );
+		}
 
-		if( dirname( $file ) == dirname( $this_plugin ) ) {
-			$links[] = sprintf( '<a href="options-general.php?page=%s">%s</a>',
-								THISISMYURL_WPTC_TEXTDOMAIN . '_settings_page',
-								__( 'Settings', THISISMYURL_WPTC_TEXTDOMAIN )
-							);
+		if ( dirname( $file ) === dirname( $this_plugin ) ) {
+			$links[] = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url( admin_url( 'options-general.php?page=wp_title_case_settings_page' ) ),
+				esc_html__( 'Settings', 'wp-title-case' )
+			);
 		}
 
 		return $links;
-
 	}
 
 
 
 	/**
-	  * plugin_action_links
-	  *
-	  * @access public
-	  * @static
-	  * @since Method available since Release 14.12
-	  *
-	  */
-	function settings_page() {
+	 * Render the settings page.
+	 */
+	public function settings_page() {
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
-	?>
-	<div id="thisismyurl-settings" class="wrap">
-		<div class="thisismyurl-icon32"><br /></div>
-		<h2><?php echo THISISMYURL_WPTC_NAME; ?></h2>
+		?>
+		<div id="thisismyurl-settings" class="wrap">
+			<div class="thisismyurl-icon32"><br /></div>
+			<h2><?php echo esc_html( THISISMYURL_WPTC_NAME ); ?></h2>
 
-        <form method="POST" action="options.php">
-		<?php 
-        settings_fields( 'thisismyurl_wp_title_case' );	
-        do_settings_sections( 'thisismyurl_wp_title_case' );
-        submit_button();
-        ?>
-        </form>
+			<form method="POST" action="options.php">
+				<?php
+				settings_fields( 'thisismyurl_wp_title_case' );
+				do_settings_sections( 'thisismyurl_wp_title_case' );
+				submit_button();
+				?>
+			</form>
+		</div>
 
+		<?php $this->render_support_block(); ?>
 
-	</div>
-
-    <div id="donate">
-
-	  <h3><?php _e( 'How to support the software', THISISMYURL_WPTC_TEXTDOMAIN ); ?></h3>
-
-	   <p><?php _e( 'Open source software such as this free WordPress plugin only work through the hard work of community members, volunteering their time or resources to make the software freely available. If you would like to show your support for this software, please consider donating towards the development effort.', THISISMYURL_WPTC_TEXTDOMAIN ); ?></p>
-	   <p><?php _e( 'Here is how you can help:', THISISMYURL_WPTC_TEXTDOMAIN ); ?></p>
-
-	   <ul>
-		  <li><a href="https://wordpress.org/plugins/<?php echo THISISMYURL_WPTC_NAMESPACE; ?>/"><?php _e( 'Give it a great review on WordPress.org;', THISISMYURL_WPTC_TEXTDOMAIN ); ?></a></li>
-		  <li><a href="https://wordpress.org/support/plugin/<?php echo THISISMYURL_WPTC_NAMESPACE; ?>"><?php _e( 'Offer free support in the plugin forums;', THISISMYURL_WPTC_TEXTDOMAIN ); ?></a></li>
-		  <li><a href="https://github.com/thisismyurl/<?php echo THISISMYURL_WPTC_NAMESPACE; ?>/issues"><?php _e( 'Report an issue, or suggest feature request;', THISISMYURL_WPTC_TEXTDOMAIN ); ?></a></li>
-		  <li><a href="http://codex.wordpress.org/I18n_for_WordPress_Developers"><?php _e( 'Translate the plugin into a local language;', THISISMYURL_WPTC_TEXTDOMAIN ); ?></a></li>
-		  <li><a href="http://twitter.com/home?status=<?php printf( __( 'Thanks @thisismyurl for %s!', THISISMYURL_WPTC_TEXTDOMAIN ), THISISMYURL_WPTC_NAME );?>"><?php _e( 'Tell your friends about the plugin on Twitter;', THISISMYURL_WPTC_TEXTDOMAIN ); ?></a></li>
-	   </ul>
-
-	   <p><?php _e( 'Any support is greatly appreciated, and I hope you enjoy using this free plugin for WordPress.', THISISMYURL_WPTC_TEXTDOMAIN ); ?></p>
-
-	   <form action="https://www.paypal.com/cgi-bin/webscr" method="post" name="paypal_form">
-	  <p><select name="amount">
-	   	<option value="5"><?php _e( 'Donate $5', THISISMYURL_WPTC_TEXTDOMAIN );?></option>
-		  <option value="10" selected><?php _e( 'Donate $10', THISISMYURL_WPTC_TEXTDOMAIN );?></option>
-		  <option value="20"><?php _e( 'Donate $20', THISISMYURL_WPTC_TEXTDOMAIN );?></option>
-	   </select>&nbsp;<input type="submit" value="Donate" class="button" /></p>
-
-
-	   <input name="cmd" type="hidden" value="_donations" />
-	   <input name="business" type="hidden" value="info@thisismyurl.com" />
-	   <input name="item_name" type="hidden" value="<?php echo THISISMYURL_WPTC_NAME; ?>" />
-
-	   <input name="currency_code" type="hidden" value="USD" />
-	   </form>
-
-
-	   <p>&#8212;&nbsp;<a href="http://thisismyurl.com/"><?php _e( 'Christopher Ross', THISISMYURL_WPTC_TEXTDOMAIN ); ?></a>&nbsp;(<a href="http://twitter.com/thisismyurl"><?php _e( '@thisismyurl', THISISMYURL_WPTC_TEXTDOMAIN ); ?></a>)</p>
-
-
-	</div>
-
-    <div class="clear"></div>
-
-
-    	<?php
-
+		<div class="clear"></div>
+		<?php
 	}
-	
+
+
+
 	/**
-	  * admin_init
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/add_settings_section
-	  * @uses http://codex.wordpress.org/Function_Reference/add_settings_field
-	  * @uses http://codex.wordpress.org/Function_Reference/register_setting
-	  * @uses http://codex.wordpress.org/Function_Reference/register_uninstall_hook
-	  * @since Method available since Release 15.01
-	  *
-	  */
-	function admin_init() {
+	 * Render the "support this plugin" block.
+	 *
+	 * Rendered as its own DOM block, deliberately outside the settings <form>.
+	 * No cross-origin POST — donate is a plain link.
+	 */
+	protected function render_support_block() {
 
-		add_settings_section(	'thisismyurl_wp_title_case_general',
-								__( 'General settings', THISISMYURL_WPTC_TEXTDOMAIN ),
-								FALSE,
-								'thisismyurl_wp_title_case'
-							);
+		?>
+		<div id="wptc-support" style="margin-top:2em;">
 
-		add_settings_field( 'thisismyurl_wp_title_case_min_word_length',
-							__( 'Minimum Word Length', THISISMYURL_WPTC_TEXTDOMAIN ),
-							array( $this, 'thisismyurl_wp_title_case_general_min_word' ),
-							'thisismyurl_wp_title_case',
-							'thisismyurl_wp_title_case_general'
-						);
+			<h3><?php esc_html_e( 'How to support the software', 'wp-title-case' ); ?></h3>
 
-		add_settings_field( 'thisismyurl_wp_title_case_ignore_words',
-							__( 'Ignored Words', THISISMYURL_WPTC_TEXTDOMAIN ),
-							array( $this, 'thisismyurl_wp_title_case_general_ignore_words' ),
-							'thisismyurl_wp_title_case',
-							'thisismyurl_wp_title_case_general'
-						);
+			<p><?php esc_html_e( 'This plugin is free and open source. If it saves you time, here is how you can help:', 'wp-title-case' ); ?></p>
+
+			<ul>
+				<li>
+					<a href="<?php echo esc_url( 'https://wordpress.org/plugins/' . THISISMYURL_WPTC_NAMESPACE . '/' ); ?>" rel="noopener noreferrer" target="_blank">
+						<?php esc_html_e( 'Leave a review on WordPress.org', 'wp-title-case' ); ?>
+					</a>
+				</li>
+				<li>
+					<a href="<?php echo esc_url( 'https://wordpress.org/support/plugin/' . THISISMYURL_WPTC_NAMESPACE ); ?>" rel="noopener noreferrer" target="_blank">
+						<?php esc_html_e( 'Help others in the support forums', 'wp-title-case' ); ?>
+					</a>
+				</li>
+				<li>
+					<a href="<?php echo esc_url( 'https://github.com/thisismyurl/' . THISISMYURL_WPTC_NAMESPACE . '/issues' ); ?>" rel="noopener noreferrer" target="_blank">
+						<?php esc_html_e( 'Report an issue or suggest a feature', 'wp-title-case' ); ?>
+					</a>
+				</li>
+				<li>
+					<a href="https://translate.wordpress.org/" rel="noopener noreferrer" target="_blank">
+						<?php esc_html_e( 'Translate the plugin into your language', 'wp-title-case' ); ?>
+					</a>
+				</li>
+				<li>
+					<a href="https://www.paypal.com/donate/?business=info%40thisismyurl.com&item_name=WP+Title+Case&currency_code=USD" rel="noopener noreferrer" target="_blank">
+						<?php esc_html_e( 'Donate via PayPal', 'wp-title-case' ); ?>
+					</a>
+				</li>
+			</ul>
+
+			<p>
+				&#8212;&nbsp;<a href="https://thisismyurl.com/" rel="noopener noreferrer" target="_blank"><?php echo esc_html__( 'Christopher Ross', 'wp-title-case' ); ?></a>
+			</p>
+
+		</div>
+		<?php
+	}
 
 
-		register_setting( 'thisismyurl_wp_title_case', 'thisismyurl_wp_title_case_min_word_length' );
-		register_setting( 'thisismyurl_wp_title_case', 'thisismyurl_wp_title_case_ignore_words' );
 
+	/**
+	 * Register settings.
+	 */
+	public function admin_init() {
 
-		register_uninstall_hook( 'uninstall.php', FALSE );
+		add_settings_section(
+			'thisismyurl_wp_title_case_general',
+			esc_html__( 'General settings', 'wp-title-case' ),
+			'__return_false',
+			'thisismyurl_wp_title_case'
+		);
 
+		add_settings_field(
+			'thisismyurl_wp_title_case_min_word_length',
+			esc_html__( 'Minimum Word Length', 'wp-title-case' ),
+			array( $this, 'thisismyurl_wp_title_case_general_min_word' ),
+			'thisismyurl_wp_title_case',
+			'thisismyurl_wp_title_case_general'
+		);
 
-		/* upgrade old plugin settings to new settings and delete them */
+		add_settings_field(
+			'thisismyurl_wp_title_case_ignore_words',
+			esc_html__( 'Ignored Words', 'wp-title-case' ),
+			array( $this, 'thisismyurl_wp_title_case_general_ignore_words' ),
+			'thisismyurl_wp_title_case',
+			'thisismyurl_wp_title_case_general'
+		);
 
+		register_setting(
+			'thisismyurl_wp_title_case',
+			'thisismyurl_wp_title_case_min_word_length',
+			array(
+				'type'              => 'integer',
+				'sanitize_callback' => 'absint',
+				'default'           => 3,
+			)
+		);
+
+		register_setting(
+			'thisismyurl_wp_title_case',
+			'thisismyurl_wp_title_case_ignore_words',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => '',
+			)
+		);
+
+		/* Upgrade old plugin settings to new settings and delete them. */
 		$old_options = get_option( 'thisismyurl_title_case' );
 
 		if ( ! empty( $old_options ) ) {
 
-			if ( isset( $old_options['text_too_short_to_process'] ) && ! empty( $old_options['text_too_short_to_process'] ) )
-				update_option( 'thisismyurl_wp_title_case_min_word_length', $old_options['text_too_short_to_process'] );
+			if ( isset( $old_options['text_too_short_to_process'] ) && ! empty( $old_options['text_too_short_to_process'] ) ) {
+				update_option( 'thisismyurl_wp_title_case_min_word_length', (int) $old_options['text_too_short_to_process'] );
+			}
 
-			if ( isset( $old_options['ignore_words'] ) && ! empty( $old_options['ignore_words'] ) )
-				update_option( 'thisismyurl_wp_title_case_ignore_words', $old_options['ignore_words'] );
+			if ( isset( $old_options['ignore_words'] ) && ! empty( $old_options['ignore_words'] ) ) {
+				update_option( 'thisismyurl_wp_title_case_ignore_words', sanitize_text_field( $old_options['ignore_words'] ) );
+			}
 
 			delete_option( 'thisismyurl_title_case' );
 		}
-
 	}
 
 
 
 	/**
-	  * sets the minimum word length to process
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/get_option
-	  * @uses http://codex.wordpress.org/Function_Reference/selected
-	  * @since Method available since Release 15.01
-	  *
-	  */
-	function thisismyurl_wp_title_case_general_min_word() {
+	 * Render the minimum-word-length select.
+	 */
+	public function thisismyurl_wp_title_case_general_min_word() {
+
+		$min_word_length = (int) get_option( 'thisismyurl_wp_title_case_min_word_length', 3 );
+
+		if ( $min_word_length < 1 ) {
+			$min_word_length = 3;
+		}
 		?>
 		<select name="thisismyurl_wp_title_case_min_word_length" id="thisismyurl_wp_title_case_min_word_length">
-			<?php
-			$min_word_length = get_option( 'thisismyurl_wp_title_case_min_word_length' );
-
-			if ( empty( $min_word_length ) )
-				$min_word_length = 2;
-
-			for ( $word_length = 1; $word_length < 8; $word_length++ ) { ?>
-			<option value="<?php echo $word_length;?>" <?php echo selected( $min_word_length, $word_length );?>><?php echo $word_length;?></option>
-			<?php } ?>
+			<?php for ( $word_length = 1; $word_length < 8; $word_length++ ) : ?>
+				<option value="<?php echo esc_attr( (string) $word_length ); ?>" <?php selected( $min_word_length, $word_length ); ?>>
+					<?php echo esc_html( (string) $word_length ); ?>
+				</option>
+			<?php endfor; ?>
 		</select>
 		<?php
 	}
 
 
 
-
 	/**
-	  * sets the ignored words for the plugin 
-	  *
-	  * @access public
-	  * @static
-	  * @uses http://codex.wordpress.org/Function_Reference/get_option
-	  * @since Method available since Release 15.01
-	  *
-	  */
-	function thisismyurl_wp_title_case_general_ignore_words() {
+	 * Render the ignore-words textarea.
+	 */
+	public function thisismyurl_wp_title_case_general_ignore_words() {
 
-		$ignore_words = get_option( 'thisismyurl_wp_title_case_ignore_words' );
+		$ignore_words = (string) get_option( 'thisismyurl_wp_title_case_ignore_words', '' );
 		?>
-		<textarea id="thisismyurl_wp_title_case_ignore_words" name="thisismyurl_wp_title_case_ignore_words" rows="5" cols="50"><?php echo esc_textarea( $ignore_words );?></textarea>
+		<textarea id="thisismyurl_wp_title_case_ignore_words" name="thisismyurl_wp_title_case_ignore_words" rows="5" cols="50"><?php echo esc_textarea( $ignore_words ); ?></textarea>
 		<?php
 	}
 
+
+
+	/**
+	 * Register the per-post "skip title case" meta box.
+	 *
+	 * @param string $post_type Post type slug.
+	 */
+	public function register_post_meta_box( $post_type ) {
+
+		$post_types = (array) apply_filters(
+			'thisismyurl_wp_title_case_meta_box_post_types',
+			array( 'post', 'page' )
+		);
+
+		if ( ! in_array( $post_type, $post_types, true ) ) {
+			return;
+		}
+
+		add_meta_box(
+			'wptc_skip_meta_box',
+			esc_html__( 'WP Title Case', 'wp-title-case' ),
+			array( $this, 'render_post_meta_box' ),
+			$post_type,
+			'side',
+			'low'
+		);
+	}
+
+
+
+	/**
+	 * Render the per-post "skip title case" meta box.
+	 *
+	 * @param WP_Post $post Current post.
+	 */
+	public function render_post_meta_box( $post ) {
+
+		$skip = (bool) get_post_meta( $post->ID, '_wptc_skip', true );
+
+		wp_nonce_field( 'wptc_skip_meta_box', 'wptc_skip_meta_box_nonce' );
+		?>
+		<p>
+			<label>
+				<input type="checkbox" name="wptc_skip" value="1" <?php checked( $skip ); ?> />
+				<?php esc_html_e( 'Skip title-case transform on this post.', 'wp-title-case' ); ?>
+			</label>
+		</p>
+		<p class="description">
+			<?php esc_html_e( 'Use this when the title contains intentional casing (e.g. iPhone, ALL CAPS, brand names).', 'wp-title-case' ); ?>
+		</p>
+		<?php
+	}
+
+
+
+	/**
+	 * Persist the per-post "skip title case" meta value.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public function save_post_meta_box( $post_id ) {
+
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( ! isset( $_POST['wptc_skip_meta_box_nonce'] ) ) {
+			return;
+		}
+
+		$nonce = sanitize_text_field( wp_unslash( $_POST['wptc_skip_meta_box_nonce'] ) );
+
+		if ( ! wp_verify_nonce( $nonce, 'wptc_skip_meta_box' ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		if ( ! empty( $_POST['wptc_skip'] ) ) {
+			update_post_meta( $post_id, '_wptc_skip', 1 );
+		} else {
+			delete_post_meta( $post_id, '_wptc_skip' );
+		}
+	}
 }

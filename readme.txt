@@ -1,74 +1,91 @@
 === WP Title Case ===
-Contributors: phillcoxon
-Plugin URI: http://phillcoxon.com/wp
-Tags: ucfirst, titlecase, title, the_title, uppercase, titles, case
-Donate link:  http://phillcoxon.com/wp
+Contributors: thisismyurl
+Plugin URI: https://thisismyurl.com/downloads/wp-title-case/
+Tags: titlecase, title-case, the_title, ucfirst, titles
+Donate link: https://www.paypal.com/donate/?business=info%40thisismyurl.com&item_name=WP+Title+Case&currency_code=USD
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires at least: 3.2.0
-Tested up to: 4.1.0
-Stable tag: 15.01.01
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Requires at least: 5.0
+Requires PHP: 7.4
+Tested up to: 6.7
+Stable tag: 0.6123
 
-Automatically applied title case rules to WordPress titles. This plugin automatically updates Page and Post titles to follow title casing rules.
+Auto-applies title-case rules to WordPress page and post titles via the_title filter — display only, no database writes.
 
 == Description ==
 
-Automatically format titles across your website include the browser title, on posts and pages, category and tag lists as well as in feeds.
+Automatically format titles across your website — including the browser title, post and page titles, category and tag list titles, and feeds.
 
-This plugin catches common title case formatting mistakes by capitalizing each work in a title. As of version 1.5, users can also select a minimum letter count to capitalize (by default two letter words and smaller are not capitalized).
+This plugin catches common title-case formatting mistakes by capitalising every word in a title above a configurable minimum length. Short words (by default, words of two letters or fewer such as "of", "to", "in") are left lowercase.
 
 For example:
 
-* "the quick brown fox" will appear as "The Quick Brown Fox"
+* "the quick brown fox" appears as "The Quick Brown Fox"
+* "i love this plugin do you have more?" appears as "I Love This Plugin Do You Have More?"
 
-* "I love this plugin do you have more?" will appear as "I Love This Plugin do you Have More?"
+It is **display-only**: the plugin uses `the_title` and `get_the_title` filters and never modifies `wp_posts.post_title` in the database.
 
+= Per-post override =
 
-This plugin is maintained by Phill Coxon (http://phillcoxon.com) or you can find him on Twitter at http://twitter.com/phillcoxon/
+Some titles are intentionally cased — `iPhone`, `WordPress`, `eBay`, `ALL CAPS` headlines. Each post and page now ships with a "Skip title-case transform on this post" checkbox in the editor sidebar. Tick it and the filter leaves that title alone.
 
-This plugin is currently available in:
+= Maintenance lineage =
 
-* English
-* French
-* German
+Originally written by Christopher Ross in 2008. Maintained by Phill Coxon between 2016 and 2024. Returned to Christopher Ross's stewardship in 2026.
 
 == Installation ==
 
-To install the plugin, please upload the plugin folder to your plugins folder and active the plugin.
+Upload the plugin folder to your `wp-content/plugins/` directory and activate from the Plugins admin screen, or install directly from the WordPress.org plugin directory.
+
+Configure under **Settings → WP Title Case**.
 
 == Screenshots ==
 
 1. WordPress admin interface
 
-== Updates ==
-
-
 == Frequently Asked Questions ==
 
 = Where do I ask questions about this plugin? =
 
-Questions can be directed to the WordPress support forums.
+Open an issue on the [GitHub repository](https://github.com/thisismyurl/wp-title-case/issues) or use the WordPress.org support forums.
 
 = How do I exclude certain words from the filter? =
 
-The plugin includes options to exclude short words (ie 2 letter words) as well as specific words based. Simply add those words to the comma seperated list and the plugin will ignore them.
+Two ways:
 
-== Donations ==
+1. Set a minimum word length under Settings → WP Title Case. Any word shorter than that length stays as-is.
+2. Add specific words to the comma-separated **Ignored Words** list. Those words will never be capitalised.
 
-Open source software such as this free WordPress plugin only work through the hard work of community members, volunteering their time or resources to make the software freely available. If you would like to show your support for this software, please consider donating towards the development effort. http://phillcoxon.com/wp/
+= How do I skip the transform on a single post? =
 
-If you can't contribute to the plugin in any other way, please consider translating it to your local language.
+Open the post in the editor and tick the "Skip title-case transform on this post" checkbox in the sidebar.
 
-== Original Developer ==
+== Changelog ==
 
-This plugin was originally created by Christopher Ross before being taken over by Phill Coxon in Jan 2016
+= 0.6123 =
 
-== Change Log ==
+* Security: removed cross-origin PayPal POST form (replaced with a plain donate anchor with `rel="noopener noreferrer"`).
+* Security: sanitised `$_GET['page']` reads with `wp_unslash()` + `sanitize_key()`.
+* Bug: fixed PHP 8+ fatal from undefined `$result_text_array`.
+* Bug: corrected misspelled class name `thissimyurl_WPTitleCase` -> `thisismyurl_WPTitleCase`; the typo'd name remains as a `class_alias` for one release.
+* Bug: removed two `register_uninstall_hook( 'uninstall.php', false )` calls; uninstall is now correctly handled by `uninstall.php`.
+* Bug: removed dead `activate_plugin_name` / `deactivate_plugin_name` hooks (these were literal strings, not real hook names).
+* i18n: replaced text-domain constant with literal `'wp-title-case'` so .pot generation actually picks the strings up.
+* i18n: added missing modern plugin headers (License, License URI, Text Domain, Domain Path, Requires at least, Requires PHP, Update URI).
+* Quality: escaped all admin output (`esc_html`, `esc_attr`, `esc_url`).
+* Quality: split donate block out of the settings `<form>` to prevent context confusion.
+* Quality: cast `min_word_length` to `int` with a sane default of 3.
+* Quality: added `is_admin()` short-circuit and `thisismyurl_wp_title_case_should_apply` filter on the `the_title` filter.
+* Quality: added Unicode-aware transform via `mb_convert_case` when `mbstring` is available.
+* Feature: per-post `_wptc_skip` post meta with a meta-box checkbox to opt out of the transform per post.
+* Repo: added `.gitignore`, `.distignore`, `CHANGELOG.md`, `SECURITY.md`, `CONTRIBUTING.md`, `CODEOWNERS`, `composer.json`, `phpcs.xml.dist`.
+* Repo: removed `|| true` from CI (failures will now actually fail).
+* Repo: corrected "Chrsitopher" typo across docblocks.
 
 = 15.01 =
 
 * added French language files
-* addded German language files
+* added German language files
 * moved plugin to OOP format
 * rewrote core replace functions
 * added uninstall functions
