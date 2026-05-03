@@ -1,0 +1,31 @@
+{
+    "name": "thisismyurl/wp-title-case",
+    "description": "Auto-applies title-case rules to WordPress page and post titles via the_title filter.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Christopher Ross",
+            "homepage": "https://thisismyurl.com/"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.10",
+        "wp-coding-standards/wpcs": "^3.1",
+        "phpcsstandards/phpcsutils": "^1.0",
+        "phpcsstandards/phpcsextra": "^1.2",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+    },
+    "scripts": {
+        "lint": "phpcs --standard=phpcs.xml.dist",
+        "lint:fix": "phpcbf --standard=phpcs.xml.dist"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

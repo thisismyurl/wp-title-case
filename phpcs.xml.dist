@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<ruleset name="WP Title Case">
+    <description>WordPress Coding Standards for the WP Title Case plugin.</description>
+
+    <file>.</file>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/langs/*</exclude-pattern>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <config name="testVersion" value="7.4-"/>
+    <config name="minimum_supported_wp_version" value="5.0"/>
+
+    <rule ref="WordPress">
+        <exclude name="WordPress.Files.FileName"/>
+        <exclude name="Generic.Commenting.DocComment.MissingShort"/>
+        <exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
+        <exclude name="Squiz.Commenting.ClassComment.SpacingAfter"/>
+        <exclude name="Squiz.Commenting.FileComment.SpacingAfterComment"/>
+        <!--
+            The class names `thisismyurl_WPTitleCase` and
+            `thisismyurl_Common_WPTC` and the global
+            `$thisismyurl_WPTitleCase` are part of the plugin's published
+            public API since 14.11. Renaming them would silently break any
+            third-party code that references them. Suppress the related
+            naming rules at ruleset level rather than file level.
+        -->
+        <exclude name="PEAR.NamingConventions.ValidClassName.StartWithCapital"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
+        <!--
+            The plugin entry file deliberately holds both the bootstrap
+            class and the `thisismyurl_wp_title_case()` helper function so
+            that theme authors can `function_exists()`-gate against a
+            single include. Splitting the helper into its own file is a
+            larger API change tracked separately.
+        -->
+        <exclude name="Universal.Files.SeparateFunctionsFromOO.Mixed"/>
+    </rule>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="wp-title-case"/>
+            </property>
+        </properties>
+    </rule>
+
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="thisismyurl"/>
+                <element value="THISISMYURL_WPTC"/>
+                <element value="wptc"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
