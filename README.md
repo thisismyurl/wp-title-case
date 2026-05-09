@@ -92,3 +92,8 @@ GPL-2.0-or-later. The original copyright remains with Christopher Ross (2008); m
 ---
 
 **More about This Is My URL:** Christopher Ross is a WordPress developer on the open web since 1996 and on WordPress since 2007. Learn more at [thisismyurl.com](https://thisismyurl.com/).
+
+
+---
+*This project follows the [10 Core Pillars](PILLARS.md). Support quality work [here](https://github.com/sponsors/thisismyurl).*
+
