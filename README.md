@@ -20,12 +20,12 @@ Same plugin, same `the_title` filter approach, same minimum-letter-count exclusi
 ## What It Doesn't Do
 
 - It doesn't enforce a particular style guide (AP, Chicago, MLA). It applies the simple rule: capitalise words above N letters.
-- It doesn't override titles with explicit casing (ALL CAPS, `iPhone`, etc.). Per-post overrides are on the roadmap.
+- It doesn't enforce DB-level content edits. All transforms happen at render time via WordPress title filters.
 
 ## Requirements
 
-- WordPress 4.1+
-- PHP 7.2+
+- WordPress 5.0+
+- PHP 7.4+
 
 ## Installation
 
@@ -45,6 +45,7 @@ Once activated, the plugin works immediately with default settings. No configura
 - Direct access protection with ABSPATH checks.
 - Nonce and capability checks for all admin actions.
 - Aligned with WordPress coding standards.
+- Legacy common-class scaffolding has been removed; plugin lifecycle hooks now live in the main plugin class.
 
 ---
 

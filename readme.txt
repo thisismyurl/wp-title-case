@@ -3,7 +3,7 @@ Contributors: thisismyurl
 Plugin URI: https://thisismyurl.com/downloads/wp-title-case/
 Tags: titlecase, title-case, the_title, ucfirst, titles
 Donate link: https://www.paypal.com/donate/?business=info%40thisismyurl.com&item_name=WP+Title+Case&currency_code=USD
-License: GPLv2 or later
+License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Requires PHP: 7.4
@@ -64,6 +64,7 @@ Open the post in the editor and tick the "Skip title-case transform on this post
 
 = 0.6123 =
 
+* Refactor: removed legacy `thisismyurl-common.php` dependency and inlined shared hooks in the main plugin class.
 * Security: removed cross-origin PayPal POST form (replaced with a plain donate anchor with `rel="noopener noreferrer"`).
 * Security: sanitised `$_GET['page']` reads with `wp_unslash()` + `sanitize_key()`.
 * Bug: fixed PHP 8+ fatal from undefined `$result_text_array`.
