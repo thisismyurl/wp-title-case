@@ -2,13 +2,13 @@
 Contributors: thisismyurl
 Plugin URI: https://thisismyurl.com/downloads/wp-title-case/
 Tags: titlecase, title-case, the_title, ucfirst, titles
-Donate link: https://www.paypal.com/donate/?business=info%40thisismyurl.com&item_name=WP+Title+Case&currency_code=USD
+Donate link: https://github.com/sponsors/thisismyurl
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 0.6123
+Stable tag: 1.6143
 
 Auto-applies title-case rules to WordPress page and post titles via the_title filter — display only, no database writes.
 
@@ -61,6 +61,10 @@ Two ways:
 Open the post in the editor and tick the "Skip title-case transform on this post" checkbox in the sidebar.
 
 == Changelog ==
+
+= 1.6143 =
+* First full release (class 1). The 0.6xxx line was pre-release on the `x.Yddd` scheme.
+* Standardized the donation link to GitHub Sponsors.
 
 = 0.6123 =
 
