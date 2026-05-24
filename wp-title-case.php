@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       WP Title Case
+ * Plugin Name:       This Is My URL - WP Title Case
  * Plugin URI:        https://thisismyurl.com/downloads/wp-title-case/
  * Description:       Automatically applies title-case rules to WordPress page and post titles via the_title filter (display only, no DB writes).
  * Author:            Christopher Ross
@@ -168,6 +168,11 @@ if ( ! class_exists( 'thisismyurl_WPTitleCase' ) ) {
 					esc_url( admin_url( 'options-general.php?page=wp_title_case_settings_page' ) ),
 					esc_html__( 'Settings', 'wp-title-case' )
 				);
+				$links[] = sprintf(
+					'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+					esc_url( 'https://github.com/sponsors/thisismyurl' ),
+					esc_html__( 'Sponsor', 'wp-title-case' )
+				);
 			}
 
 			return $links;
@@ -236,8 +241,8 @@ if ( ! class_exists( 'thisismyurl_WPTitleCase' ) ) {
 						</a>
 					</li>
 					<li>
-						<a href="https://www.paypal.com/donate/?business=info%40thisismyurl.com&item_name=WP+Title+Case&currency_code=USD" rel="noopener noreferrer" target="_blank">
-							<?php esc_html_e( 'Donate via PayPal', 'wp-title-case' ); ?>
+						<a href="<?php echo esc_url( 'https://github.com/sponsors/thisismyurl' ); ?>" rel="noopener noreferrer" target="_blank">
+							<?php esc_html_e( 'Sponsor on GitHub', 'wp-title-case' ); ?>
 						</a>
 					</li>
 				</ul>
