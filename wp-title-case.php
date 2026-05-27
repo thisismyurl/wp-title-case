@@ -5,7 +5,7 @@
  * Description:       Automatically applies title-case rules to WordPress page and post titles via the_title filter (display only, no DB writes).
  * Author:            Christopher Ross
  * Author URI:        https://thisismyurl.com/
- * Version:           1.6143
+ * Version:           1.6147
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       wp-title-case
@@ -36,7 +36,7 @@ define( 'THISISMYURL_WPTC_FILEPATHURL', plugin_dir_url( __FILE__ ) );
 define( 'THISISMYURL_WPTC_NAMESPACE', basename( THISISMYURL_WPTC_FILENAME, '.php' ) );
 define( 'THISISMYURL_WPTC_TEXTDOMAIN', 'wp-title-case' );
 
-define( 'THISISMYURL_WPTC_VERSION', '1.6143' );
+define( 'THISISMYURL_WPTC_VERSION', '1.6147' );
 
 /**
  * Core class for WP Title Case.

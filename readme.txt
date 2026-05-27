@@ -8,7 +8,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.6143
+Stable tag: 1.6147
 
 Auto-applies title-case rules to WordPress page and post titles via the_title filter — display only, no database writes.
 
@@ -61,6 +61,11 @@ Two ways:
 Open the post in the editor and tick the "Skip title-case transform on this post" checkbox in the sidebar.
 
 == Changelog ==
+
+= 1.6147 =
+* Unified plugin versioning to the x.Yddd calendar-version scheme.
+* Confirmed compatibility with WordPress 7.0.
+
 
 = 1.6143 =
 * First full release (class 1). The 0.6xxx line was pre-release on the `x.Yddd` scheme.
