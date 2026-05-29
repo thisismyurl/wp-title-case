@@ -8,7 +8,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.6147
+Stable tag: 1.6148.2110
 
 Auto-applies title-case rules to WordPress page and post titles via the_title filter — display only, no database writes.
 
