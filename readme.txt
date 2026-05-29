@@ -33,7 +33,7 @@ Some titles are intentionally cased — `iPhone`, `WordPress`, `eBay`, `ALL CAPS
 
 = Maintenance lineage =
 
-Originally written by Christopher Ross in 2008. Maintained by Phill Coxon between 2016 and 2024. Returned to Christopher Ross's stewardship in 2026.
+Originally written by Christopher Ross in 2008. Maintained by Phill Coxon between 2016 and 2019. Returned to Christopher Ross's stewardship in 2026.
 
 == Installation ==
 
