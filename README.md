@@ -13,9 +13,10 @@ Same plugin, same `the_title` filter approach, same minimum-letter-count exclusi
 ## What it does
 
 - **Capitalises words** in post and page titles according to title-case conventions.
-- **Excludes short words** (default: 2 letters or fewer) so "of", "to", "in", and "the" stay lowercase.
-- **Display-only** — uses the `the_title` filter, never modifies `wp_posts.post_title`.
-- **Works everywhere** — browser titles, post and page titles, category and tag lists, and feeds.
+- **Excludes short words** (default: words shorter than 3 letters) so "of", "to", and "in" stay lowercase. At the default minimum, "the" is long enough to be capitalised.
+- **Preserves brand names** — WordPress, iPhone, eBay, iOS, PHP, HTML, CSS, URL, SEO, API and other common technology names are left exactly as typed, out of the box.
+- **Display-only** — uses the `the_title`, `get_the_title`, `the_title_rss`, and `document_title_parts` filters, never modifies `wp_posts.post_title`.
+- **Works everywhere** — browser/document titles, post and page titles, category and tag lists, and feeds.
 
 ## What it doesn't do
 

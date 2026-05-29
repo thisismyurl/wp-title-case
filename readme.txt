@@ -16,14 +16,16 @@ Auto-applies title-case rules to WordPress page and post titles via the_title fi
 
 Automatically format titles across your website — including the browser title, post and page titles, category and tag list titles, and feeds.
 
-This plugin catches common title-case formatting mistakes by capitalising every word in a title above a configurable minimum length. Short words (by default, words of two letters or fewer such as "of", "to", "in") are left lowercase.
+This plugin catches common title-case formatting mistakes by capitalising every word in a title at or above a configurable minimum length. Short words (by default, words of two letters or fewer such as "of", "to", "in") are left lowercase.
 
-For example:
+For example, with the default minimum word length of 3:
 
 * "the quick brown fox" appears as "The Quick Brown Fox"
-* "i love this plugin do you have more?" appears as "I Love This Plugin Do You Have More?"
+* "i love this plugin do you have more?" appears as "i Love This Plugin do You Have More?" — "i" and "do" stay lowercase because they are shorter than the minimum word length.
 
-It is **display-only**: the plugin uses `the_title` and `get_the_title` filters and never modifies `wp_posts.post_title` in the database.
+Common technology names are preserved out of the box — WordPress, iPhone, eBay, iOS, PHP, HTML, CSS, URL, SEO, API and more are left exactly as typed, so the plugin no longer mangles the brand names it is meant to leave alone. You can extend the preserved list under Settings, per post, or with a filter.
+
+It is **display-only**: the plugin uses the `the_title`, `get_the_title`, `the_title_rss`, and `document_title_parts` filters and never modifies `wp_posts.post_title` in the database. The `document_title_parts` filter is what formats the browser/document title.
 
 = Per-post override =
 
@@ -61,6 +63,12 @@ Two ways:
 Open the post in the editor and tick the "Skip title-case transform on this post" checkbox in the sidebar.
 
 == Changelog ==
+
+= 1.6148 =
+* Feature: title-case now formats the browser/document title via the `document_title_parts` filter, honouring the "browser title" promise. Only the page-title part is transformed; the site name and pagination labels are left untouched.
+* Bug: shipped a default preserve list of common technology proper nouns and acronyms (WordPress, iPhone, eBay, iOS, PHP, HTML, CSS, URL, SEO, API, and more) so out-of-the-box title-casing no longer mangles the brand names the ignore list exists to protect. Extendable via the `thisismyurl_wp_title_case_default_ignore_words` filter.
+* Bug: the priority-999 `the_title` transform no longer leaks into block-editor REST responses; added a `REST_REQUEST` short-circuit so editors see the title they saved.
+* Docs: corrected the readme worked example to match actual behaviour at the default minimum word length of 3 (short words such as "i" and "do" stay lowercase).
 
 = 1.6147 =
 * Unified plugin versioning to the x.Yddd calendar-version scheme.
