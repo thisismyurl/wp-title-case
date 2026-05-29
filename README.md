@@ -6,16 +6,17 @@ Auto-applies title-case rules to WordPress page and post titles via the `the_tit
 
 ## The short story
 
-I wrote this plugin in 2008. In January 2016, Phill Coxon took it over and shepherded it through the WordPress 4.x era. The plugin went quiet for a while, but I've brought it back home to keep it working on modern WordPress.
+I wrote this plugin in 2008. In January 2016, Phill Coxon took it over and shepherded it between 2016 and 2019. The plugin went quiet for a while, but I've brought it back home to keep it working on modern WordPress.
 
 Same plugin, same `the_title` filter approach, same minimum-letter-count exclusion, same harmless display-only behaviour. It just lives at [github.com/thisismyurl/wp-title-case](https://github.com/thisismyurl/wp-title-case) again, and the maintenance is mine.
 
 ## What it does
 
 - **Capitalises words** in post and page titles according to title-case conventions.
-- **Excludes short words** (default: 2 letters or fewer) so "of", "to", "in", and "the" stay lowercase.
-- **Display-only** — uses the `the_title` filter, never modifies `wp_posts.post_title`.
-- **Works everywhere** — browser titles, post and page titles, category and tag lists, and feeds.
+- **Excludes short words** (default: words shorter than 3 letters) so "of", "to", and "in" stay lowercase. At the default minimum, "the" is long enough to be capitalised.
+- **Preserves brand names** — WordPress, iPhone, eBay, iOS, PHP, HTML, CSS, URL, SEO, API and other common technology names are left exactly as typed, out of the box.
+- **Display-only** — uses the `the_title`, `get_the_title`, `the_title_rss`, and `document_title_parts` filters, never modifies `wp_posts.post_title`.
+- **Works everywhere** — browser/document titles, post and page titles, category and tag lists, and feeds.
 
 ## What it doesn't do
 
@@ -108,7 +109,7 @@ This plugin is built and maintained by [This Is My URL](https://thisismyurl.com/
 
 ## License
 
-GPL-2.0-or-later — see [LICENSE](LICENSE) or [gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html). The original copyright remains with Christopher Ross (2008); maintenance contributions through 2016 are credited to Phill Coxon.
+GPL-2.0-or-later — see [LICENSE](LICENSE) or [gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html). The original copyright remains with Christopher Ross (2008); maintenance contributions between 2016 and 2019 are credited to Phill Coxon.
 
 ---
 *This project follows the [10 Core Pillars](PILLARS.md). Support quality work [here](https://github.com/sponsors/thisismyurl).*

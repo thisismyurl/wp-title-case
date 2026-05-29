@@ -5,7 +5,7 @@
  * Description:       Automatically applies title-case rules to WordPress page and post titles via the_title filter (display only, no DB writes).
  * Author:            Christopher Ross
  * Author URI:        https://thisismyurl.com/
- * Version:           1.6147
+ * Version:           1.6148.2110
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       wp-title-case
@@ -36,7 +36,7 @@ define( 'THISISMYURL_WPTC_FILEPATHURL', plugin_dir_url( __FILE__ ) );
 define( 'THISISMYURL_WPTC_NAMESPACE', basename( THISISMYURL_WPTC_FILENAME, '.php' ) );
 define( 'THISISMYURL_WPTC_TEXTDOMAIN', 'wp-title-case' );
 
-define( 'THISISMYURL_WPTC_VERSION', '1.6147' );
+define( 'THISISMYURL_WPTC_VERSION', '1.6148.2110' );
 
 /**
  * Core class for WP Title Case.
@@ -433,7 +433,7 @@ if ( ! class_exists( 'thisismyurl_WPTitleCase' ) ) {
 		}
 
 		/**
-		 * Register the_title filter callbacks.
+		 * Register title filter callbacks.
 		 *
 		 * @return void
 		 */
@@ -442,9 +442,94 @@ if ( ! class_exists( 'thisismyurl_WPTitleCase' ) ) {
 			add_filter( 'the_title', array( $this, 'title_case' ), 999, 2 );
 			add_filter( 'get_the_title', array( $this, 'title_case' ), 999, 2 );
 			add_filter( 'the_title_rss', array( $this, 'title_case' ), 999 );
+			add_filter( 'document_title_parts', array( $this, 'document_title_parts' ), 999 );
+		}
+
+		/**
+		 * Apply title-case to the browser/document title.
+		 *
+		 * Hooks `document_title_parts` (the modern replacement for `wp_title`)
+		 * and transforms only the `title` part — the viewed page's title. The
+		 * `site`, `tagline`, and `page` parts are left untouched so the site
+		 * name and pagination labels keep their intended casing.
+		 *
+		 * @param array $parts Document title parts. See `document_title_parts`.
+		 * @return array Document title parts with the `title` part title-cased.
+		 */
+		public function document_title_parts( $parts ) {
+
+			if ( ! is_array( $parts ) || empty( $parts['title'] ) ) {
+				return $parts;
+			}
+
+			$parts['title'] = $this->title_case( $parts['title'] );
+
+			return $parts;
 		}
 
 
+
+		/**
+		 * Default words preserved as-typed, out of the box.
+		 *
+		 * These are common technology proper nouns and acronyms whose casing is
+		 * intentional. Without them, the default `mb_convert_case()` transform
+		 * would mangle the very names the ignore list exists to protect
+		 * (iPhone -> Iphone, WordPress -> Wordpress, eBay -> Ebay). Each entry
+		 * is compared case-insensitively against the lowercased title word, so
+		 * the original casing in the title is what gets preserved.
+		 *
+		 * The list is filterable so sites can extend or replace it.
+		 *
+		 * @return string[] Lowercased words to leave untouched.
+		 */
+		public function default_ignore_words() {
+
+			$defaults = array(
+				'wordpress',
+				'woocommerce',
+				'iphone',
+				'ipad',
+				'ipod',
+				'imac',
+				'macos',
+				'ios',
+				'ipados',
+				'macbook',
+				'ebay',
+				'youtube',
+				'github',
+				'gitlab',
+				'php',
+				'html',
+				'css',
+				'json',
+				'xml',
+				'url',
+				'uri',
+				'seo',
+				'api',
+				'rest',
+				'ajax',
+				'http',
+				'https',
+				'ftp',
+				'sql',
+				'php',
+				'pdf',
+				'rss',
+				'wp-cli',
+			);
+
+			/**
+			 * Filter the default list of words preserved as-typed.
+			 *
+			 * @since 1.6147
+			 *
+			 * @param string[] $defaults Lowercased words to leave untouched.
+			 */
+			return (array) apply_filters( 'thisismyurl_wp_title_case_default_ignore_words', $defaults );
+		}
 
 		/**
 		 * Apply title-case rules to a string.
@@ -478,8 +563,13 @@ if ( ! class_exists( 'thisismyurl_WPTitleCase' ) ) {
 				return $result_text;
 			}
 
-			/* Skip in admin context — editors should see the title they actually saved. */
-			if ( is_admin() && ! wp_doing_ajax() ) {
+			/*
+			 * Skip in admin and REST contexts — editors should see the title
+			 * they actually saved. The block editor and Site Editor read titles
+			 * over the REST API, which is not covered by is_admin(), so guard
+			 * REST_REQUEST explicitly to keep saved titles intact in the editor.
+			 */
+			if ( ( is_admin() && ! wp_doing_ajax() ) || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 				return $result_text;
 			}
 
@@ -489,9 +579,11 @@ if ( ! class_exists( 'thisismyurl_WPTitleCase' ) ) {
 			}
 
 			/* Fetch the current options. */
-			$ignore_words      = get_option( 'thisismyurl_wp_title_case_ignore_words', '' );
-			$min_word_length   = (int) get_option( 'thisismyurl_wp_title_case_min_word_length', 3 );
-			$ignore_words_list = array();
+			$ignore_words    = get_option( 'thisismyurl_wp_title_case_ignore_words', '' );
+			$min_word_length = (int) get_option( 'thisismyurl_wp_title_case_min_word_length', 3 );
+
+			/* Seed with the built-in tech proper-noun list, then add the user's words. */
+			$ignore_words_list = $this->default_ignore_words();
 
 			if ( ! empty( $ignore_words ) ) {
 				$ignored_word_array = explode( ',', trim( (string) $ignore_words ) );
