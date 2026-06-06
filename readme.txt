@@ -1,4 +1,4 @@
-=== This Is My URL - WP Title Case ===
+=== WP Title Case by Christopher Ross ===
 Contributors: thisismyurl
 Plugin URI: https://thisismyurl.com/downloads/wp-title-case/
 Tags: titlecase, title-case, the_title, ucfirst, titles

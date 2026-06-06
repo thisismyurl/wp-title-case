@@ -1,4 +1,4 @@
-# This Is My URL - WP Title Case
+# Christopher Ross - WP Title Case
 
 [![CI](https://github.com/thisismyurl/wp-title-case/actions/workflows/ci.yml/badge.svg)](https://github.com/thisismyurl/wp-title-case/actions/workflows/ci.yml) [![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue)](https://wordpress.org/plugins/wp-title-case/) [![License](https://img.shields.io/badge/License-GPL--2.0-blue)](LICENSE)
 
@@ -83,9 +83,9 @@ Code contributions are welcome. The short version:
 
 The full workflow and standards live in [CONTRIBUTING.md](CONTRIBUTING.md). Contributing is never required, but it is always appreciated.
 
-## About This Is My URL
+## About Christopher Ross
 
-This plugin is built and maintained by [This Is My URL](https://thisismyurl.com/), the WordPress development and technical SEO practice of Christopher Ross. I help teams build WordPress sites that stay secure, fast, and maintainable, and I write small, focused plugins like this one for the problems those sites keep running into.
+This plugin is built and maintained by [Christopher Ross](https://thisismyurl.com/), the WordPress development and technical SEO practice of Christopher Ross. I help teams build WordPress sites that stay secure, fast, and maintainable, and I write small, focused plugins like this one for the problems those sites keep running into.
 
 ### My background
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       This Is My URL - WP Title Case
+ * Plugin Name:       WP Title Case by Christopher Ross
  * Plugin URI:        https://thisismyurl.com/downloads/wp-title-case/
  * Description:       Automatically applies title-case rules to WordPress page and post titles via the_title filter (display only, no DB writes).
  * Author:            Christopher Ross
