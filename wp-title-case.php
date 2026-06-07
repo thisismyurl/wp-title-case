@@ -515,7 +515,6 @@ if ( ! class_exists( 'thisismyurl_WPTitleCase' ) ) {
 				'https',
 				'ftp',
 				'sql',
-				'php',
 				'pdf',
 				'rss',
 				'wp-cli',
